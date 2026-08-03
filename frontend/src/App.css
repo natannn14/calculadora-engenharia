@@ -1,0 +1,21 @@
+/* App.css — estilos locais de componentes (legacy-swing adaptado) */
+
+/* Garante que o .counter se mantenha caso reaproveitado */
+.counter {
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: var(--col-operator);
+  background: rgba(210,110,0,0.12);
+  border: 1px solid rgba(210,110,0,0.3);
+  transition: border-color var(--transition);
+}
+.counter:hover { border-color: var(--col-operator); }
+
+/* Seletor customizado – seta decorativa */
+.field-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23D26E00' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.2rem;
+}
