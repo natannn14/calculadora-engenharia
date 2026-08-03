@@ -1,81 +1,104 @@
 # CalculaEng
 
-Motor de cálculo simbólico e estrutural para engenharia. Backend em Java (Spring Boot + Symja CAS), frontend em React/Vite com TypeScript.
+> Motor de cálculo simbólico e análise estrutural para engenharia.
 
-## O que faz
+## O Problema
 
-- **Cálculo simbólico:** derivadas, integrais, simplificação, fatoração, expansão polinomial, limites e séries de Taylor
-- **Análise estrutural:** viga bi-apoiada com carga distribuída — reações de apoio, diagramas de momento fletor e esforço cortante
-- **Normalização pt-BR:** aceita `tg`, `sen`, `arctg` e converte automaticamente para a notação do CAS
+Estudantes e profissionais de engenharia frequentemente enfrentam dois gargalos diários:
 
-## Stack
+1. **Calculadoras simbólicas engessadas ou pagas:** Ferramentas tradicionais de CAS (Computer Algebra System) são pesadas, possuem sintaxes obscuras ou exigem assinaturas caras para exibir o passo a passo da resolução.
+2. **Falta de contexto nativo em pt-BR:** A maioria dos CAS exige comandos em inglês e notação estritamente internacional (ex: `tan` em vez de `tg`, `sin` em vez de `sen`), gerando erros bobos de digitação durante a resolução de exercícios.
+3. **Ferramentas genéricas sem foco em aplicação direta:** Calculadoras comuns resolvem a conta, mas não geram os diagramas estruturais (Momento Fletor e Esforço Cortante) com os passos detalhados para validação rápida de projetos e trabalhos acadêmicos.
 
-| Camada | Tech | Versão |
-|--------|------|--------|
-| Backend | Java 21, Spring Boot, Symja CAS | 3.2.4 / 3.2.0 |
-| Frontend | React, TypeScript, Vite, Tailwind CSS | 19.x / 8.x / 4.x |
-| Legacy | Java Swing (referência de tema) | — |
+## A Solução
 
-## Estrutura
+O **CalculaEng** resolve isso combinando um motor simbólico de alta precisão no backend com uma interface web moderna, rápida e otimizada para notação brasileira:
 
-```
+- **Notação Pt-BR Nativa:** Tradução automática de termos como `tg`, `sen`, `arctg` e adição automática da constante de integração (`+ C`) em integrais indefinidas.
+- **Resolução Simbólica Passo a Passo:** Derivadas, integrais, limites, séries de Taylor, simplificação, expansão e fatoração com explicitação da memória de cálculo.
+- **Templates de Engenharia:** Módulo dedicado para análise de vigas bi-apoiadas com geração automática de diagramas $M(x)$ e $V(x)$ via SVG responsivo.
+- **Interface Baseada no Legacy Swing:** Visual escuro minimalista focado em produtividade e alto contraste, sem distrações.
+
+---
+
+## Stack Tecnológica
+
+| Camada | Tecnologia | Descrição |
+|--------|------------|-----------|
+| **Backend** | Java 21 + Spring Boot 3.2 | API REST para orquestração |
+| **CAS Engine** | Symja 3.2 | Motor matemático de álgebra computacional |
+| **Frontend** | React 19 + TypeScript + Vite | SPA reativa e otimizada |
+| **Styling** | Vanilla CSS + Tailwind v4 | Design system customizado (Tema Legacy-Swing) |
+
+---
+
+## Arquitetura do Projeto
+
+```text
 .
-├── backend/          # API REST (Spring Boot + Symja)
+├── backend/          # API REST em Spring Boot (Java 21)
 │   └── src/main/java/br/calculaeng/backend/
-│       ├── controller/   # CalculadoraController, BeamController
-│       ├── dto/          # Request/Response objects
-│       └── service/      # SymbolicService, BeamService
-├── frontend/         # SPA (React + Vite)
+│       ├── controller/   # Endpoints (/api/symbolic, /api/templates/beam)
+│       ├── dto/          # Objetos de transferência de dados
+│       └── service/      # Integração com Symja CAS e física aplicada
+├── frontend/         # SPA em React + TypeScript + Vite
 │   └── src/
-│       ├── components/   # SymbolicForm, BeamForm, SymbolicKeyboard
+│       ├── components/   # Formulários, teclados rápidos e gráficos SVG
 │       ├── App.tsx
-│       └── index.css     # Design system (legacy-swing web)
-└── legacy-swing/     # Calculadora desktop original (Java Swing)
+│       └── index.css     # Design tokens do tema Legacy-Swing
+└── legacy-swing/     # Aplicação desktop original em Java Swing (referência)
 ```
 
-## Rodando
+---
+
+## Como Executar Localmente
 
 ### Pré-requisitos
+- **Java JDK 21** ou superior
+- **Node.js 20** ou superior
+- **Git**
 
-- Java 21+
-- Node.js 20+
-- npm
-
-### Backend
+### 1. Iniciar o Backend (Spring Boot)
 
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
+> O servidor iniciará em `http://localhost:8080`.
 
-Sobe em `http://localhost:8080`.
+### 2. Iniciar o Frontend (React + Vite)
 
-### Frontend
+Em outro terminal:
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+> Acesse a aplicação em `http://localhost:5173`.
 
-Sobe em `http://localhost:5173`.
+---
 
-## API
+## Endpoints da API
 
-### POST `/api/symbolic`
+### `POST /api/symbolic`
+Executa operações de cálculo simbólico.
 
 ```json
 {
   "task": "derive",
-  "expr": "x^3 * sin(x)",
+  "expr": "x^3 * sen(x)",
   "variable": "x",
   "lang": "pt-BR"
 }
 ```
 
-Tasks: `derive`, `integrate`, `simplify`, `solve`, `expand`, `factor`, `limit`, `taylor`.
+*Tasks suportadas:* `derive`, `integrate`, `simplify`, `solve`, `expand`, `factor`, `limit`, `taylor`.
 
-### POST `/api/templates/beam`
+---
+
+### `POST /api/templates/beam`
+Calcula esforços solicitantes e reações em vigas bi-apoiadas.
 
 ```json
 {
@@ -84,28 +107,16 @@ Tasks: `derive`, `integrate`, `simplify`, `solve`, `expand`, `factor`, `limit`, 
 }
 ```
 
-Retorna reações, momento máximo, cortante máximo, diagramas ponto-a-ponto e passos resolvidos.
-
-## Tema
-
-O frontend reproduz as cores do `TemaEscuro.java` do Swing adaptadas pra web:
-
-| Elemento | Cor |
-|----------|-----|
-| Fundo principal | `#202020` |
-| Operador | `#D26E00` |
-| Igual | `#1E821E` |
-| Clear | `#B43232` |
-
-Toggle claro/escuro no header.
+---
 
 ## Roadmap
 
-- [ ] PWA (manifest + service worker)
-- [ ] Mais templates estruturais (viga engastada, pórtico)
-- [ ] Gráficos interativos nos diagramas
-- [ ] Deploy (backend em container, frontend em CDN)
+- [ ] PWA (suporte a instalação mobile e offline)
+- [ ] Exportação de relatórios em PDF/LaTeX
+- [ ] Novos templates estruturais (viga engastada, pórticos planos)
+
+---
 
 ## Licença
 
-MIT
+Este projeto está sob a licença MIT.

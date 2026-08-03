@@ -1,21 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SymbolicForm } from "./components/SymbolicForm";
 import { BeamForm } from "./components/BeamForm";
 import "./App.css";
 
 type Tab = "symbolic" | "beam";
+type ThemeKey = 
+  | "theme-escuro" 
+  | "theme-claro" 
+  | "theme-ben10" 
+  | "theme-goku" 
+  | "theme-naruto" 
+  | "theme-miles" 
+  | "theme-peter";
+
+interface ThemeOption {
+  key: ThemeKey;
+  label: string;
+  icon: string;
+}
+
+const THEMES: ThemeOption[] = [
+  { key: "theme-escuro", label: "Escuro (Swing)", icon: "🌙" },
+  { key: "theme-claro",  label: "Claro (Swing)", icon: "☀️" },
+  { key: "theme-ben10",  label: "Ben 10", icon: "🟢" },
+  { key: "theme-goku",   label: "Goku", icon: "🟠" },
+  { key: "theme-naruto", label: "Naruto", icon: "🦊" },
+  { key: "theme-miles",  label: "Spider-Miles", icon: "🕷️" },
+  { key: "theme-peter",  label: "Spider-Peter", icon: "🔴" },
+];
 
 function App() {
   const [tab, setTab] = useState<Tab>("symbolic");
-  const [isLight, setIsLight] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<ThemeKey>(() => {
+    return (localStorage.getItem("calc_theme") as ThemeKey) || "theme-escuro";
+  });
 
-  function toggleTheme() {
-    setIsLight((v) => {
-      const next = !v;
-      document.documentElement.classList.toggle("light", next);
-      return next;
-    });
-  }
+  useEffect(() => {
+    document.documentElement.className = currentTheme;
+    localStorage.setItem("calc_theme", currentTheme);
+  }, [currentTheme]);
 
   return (
     <>
@@ -30,14 +53,29 @@ function App() {
 
         <div className="app-header-right">
           <span className="version-badge">MVP Alpha</span>
-          <button
-            className="theme-toggle"
-            onClick={toggleTheme}
-            title={isLight ? "Mudar para escuro" : "Mudar para claro"}
-            aria-label="Alternar tema"
-          >
-            {isLight ? "🌙" : "☀️"}
-          </button>
+          
+          {/* Seletor de Tema do Legacy */}
+          <div className="theme-select-wrapper">
+            <select
+              value={currentTheme}
+              onChange={(e) => setCurrentTheme(e.target.value as ThemeKey)}
+              className="field-select"
+              style={{
+                fontSize: "0.82rem",
+                padding: "0.4rem 1.8rem 0.4rem 0.6rem",
+                borderRadius: "20px",
+                cursor: "pointer",
+                fontWeight: 600,
+              }}
+              aria-label="Selecionar tema"
+            >
+              {THEMES.map((t) => (
+                <option key={t.key} value={t.key}>
+                  {t.icon} {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </header>
 
@@ -82,7 +120,7 @@ function App() {
         <span className="dot" />
         React + Vite
         <span className="dot" />
-        Tema Legacy-Swing Web
+        7 Temas Legacy-Swing
       </footer>
     </>
   );

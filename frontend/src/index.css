@@ -47,7 +47,7 @@
 }
 
 /* === LIGHT THEME (TemaClaro) === */
-.light {
+.light, .theme-claro {
   --bg-main:       #F3F3F3;
   --bg-visor:      #E6E6E6;
   --bg-card:       #FFFFFF;
@@ -73,6 +73,151 @@
   --shadow-card:   0 4px 24px rgba(0,0,0,0.12);
   --shadow-btn:    0 2px 8px rgba(0,0,0,0.15);
   --shadow-glow:   0 0 16px var(--col-accent-glow);
+}
+
+/* === TEMA BEN 10 === */
+.theme-ben10 {
+  --bg-main:       #32CD32;
+  --bg-visor:      #0A0A0A;
+  --bg-card:       #141414;
+  --bg-input:      #1A1A1A;
+  --bg-num:        #141414;
+  --bg-nav:        #1E1E1E;
+  --bg-tab-active: #282828;
+
+  --col-operator:  #32CD32;
+  --col-equal:     #32CD32;
+  --col-clear:     #006400;
+  --col-accent:    #32CD32;
+  --col-accent-glow: rgba(50,205,50,0.4);
+
+  --text-primary:  #98FB98;
+  --text-muted:    #32CD32;
+  --text-visor:    #98FB98;
+  --text-result:   #32CD32;
+
+  --border:        rgba(50,205,50,0.25);
+  --border-accent: rgba(50,205,50,0.6);
+
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.7);
+  --shadow-btn:    0 2px 8px rgba(0,0,0,0.5);
+  --shadow-glow:   0 0 20px var(--col-accent-glow);
+}
+
+/* === TEMA GOKU === */
+.theme-goku {
+  --bg-main:       #FF6600;
+  --bg-visor:      #FFF8DC;
+  --bg-card:       #191970;
+  --bg-input:      #12124A;
+  --bg-num:        #191970;
+  --bg-nav:        #12124A;
+  --bg-tab-active: #23238E;
+
+  --col-operator:  #FFD700;
+  --col-equal:     #FFD700;
+  --col-clear:     #C81E1E;
+  --col-accent:    #FFD700;
+  --col-accent-glow: rgba(255,215,0,0.45);
+
+  --text-primary:  #FFFFFF;
+  --text-muted:    #FFD700;
+  --text-visor:    #000000;
+  --text-result:   #FFD700;
+
+  --border:        rgba(255,215,0,0.3);
+  --border-accent: #FFD700;
+
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.6);
+  --shadow-btn:    0 2px 8px rgba(0,0,0,0.4);
+  --shadow-glow:   0 0 20px var(--col-accent-glow);
+}
+
+/* === TEMA NARUTO === */
+.theme-naruto {
+  --bg-main:       #FF8C00;
+  --bg-visor:      #FFEBCD;
+  --bg-card:       #141414;
+  --bg-input:      #1F1F1F;
+  --bg-num:        #2A2A2A;
+  --bg-nav:        #1A1A1A;
+  --bg-tab-active: #2A2A2A;
+
+  --col-operator:  #00008B;
+  --col-equal:     #FF8C00;
+  --col-clear:     #C80000;
+  --col-accent:    #FF8C00;
+  --col-accent-glow: rgba(255,140,0,0.45);
+
+  --text-primary:  #FFFFFF;
+  --text-muted:    #FFA500;
+  --text-visor:    #000000;
+  --text-result:   #FF8C00;
+
+  --border:        rgba(255,140,0,0.3);
+  --border-accent: #FF8C00;
+
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.6);
+  --shadow-btn:    0 2px 8px rgba(0,0,0,0.4);
+  --shadow-glow:   0 0 20px var(--col-accent-glow);
+}
+
+/* === TEMA SPIDER-MAN MILES === */
+.theme-miles {
+  --bg-main:       #0F0F0F;
+  --bg-visor:      #1E1E1E;
+  --bg-card:       #1E1E1E;
+  --bg-input:      #141414;
+  --bg-num:        #282828;
+  --bg-nav:        #141414;
+  --bg-tab-active: #282828;
+
+  --col-operator:  #DC0A0A;
+  --col-equal:     #DC0A0A;
+  --col-clear:     #646464;
+  --col-accent:    #DC0A0A;
+  --col-accent-glow: rgba(220,10,10,0.45);
+
+  --text-primary:  #FFFFFF;
+  --text-muted:    #E63939;
+  --text-visor:    #FFFFFF;
+  --text-result:   #DC0A0A;
+
+  --border:        rgba(220,10,10,0.25);
+  --border-accent: rgba(220,10,10,0.6);
+
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.8);
+  --shadow-btn:    0 2px 8px rgba(0,0,0,0.6);
+  --shadow-glow:   0 0 20px var(--col-accent-glow);
+}
+
+/* === TEMA SPIDER-MAN PETER === */
+.theme-peter {
+  --bg-main:       #C81414;
+  --bg-visor:      #FFFFFF;
+  --bg-card:       #1432C8;
+  --bg-input:      #0F28A0;
+  --bg-num:        #1432C8;
+  --bg-nav:        #0F28A0;
+  --bg-tab-active: #1E41E6;
+
+  --col-operator:  #FFFFFF;
+  --col-equal:     #FFFFFF;
+  --col-clear:     #141414;
+  --col-accent:    #FFFFFF;
+  --col-accent-glow: rgba(255,255,255,0.4);
+
+  --text-primary:  #FFFFFF;
+  --text-muted:    #FFB4B4;
+  --text-visor:    #000000;
+  --text-result:   #FFFFFF;
+
+  --border:        rgba(255,255,255,0.25);
+  --border-accent: #FFFFFF;
+
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.6);
+  --shadow-btn:    0 2px 8px rgba(0,0,0,0.4);
+  --shadow-glow:   0 0 20px var(--col-accent-glow);
 }
 
 /* =============================================
