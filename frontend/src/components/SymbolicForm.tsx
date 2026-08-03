@@ -32,7 +32,10 @@ export function SymbolicForm() {
     setExpr((prev) => prev + text);
   }
 
-  /** 💡 Dica de Ouro: integral indefinida → adiciona " + C" */
+  function handleBackspace() {
+    setExpr((prev) => prev.slice(0, -1));
+  }
+
   function formatResult(result: string): string {
     if (task === "integrate") {
       const trimmed = result.trim();
@@ -43,8 +46,9 @@ export function SymbolicForm() {
     return result;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit() {
+    if (!expr) return;
+    
     setLoading(true);
     setError(null);
     setResponse(null);
@@ -65,7 +69,7 @@ export function SymbolicForm() {
 
       const data: SymbolicResponse = await res.json();
       setResponse(data);
-      saveToHistory(`${task}: ${expr}`);
+      saveToHistory(`${task}: ${expr} [${variable}]`);
     } catch (err: any) {
       setError(err.message || "Erro ao comunicar com o backend");
     } finally {
@@ -85,115 +89,159 @@ export function SymbolicForm() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-
-      {/* FORM */}
-      <div className="calc-card">
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-
-          {/* TAREFA */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
+      
+      {/* Esquerda: Entrada e Teclado */}
+      <div className="col-span-1 lg:col-span-7 flex flex-col gap-lg h-auto lg:h-full">
+        
+        {/* Header Section */}
+        <div className="flex items-baseline justify-between w-full border-b border-surface-tint pb-sm mb-sm relative flex-wrap gap-sm">
+          <div className="absolute -bottom-[1px] left-0 w-1/3 h-[2px] bg-secondary shadow-[0_0_8px_var(--tw-shadow-color)] shadow-secondary"></div>
           <div>
-            <label className="field-label" htmlFor="sym-task">Tarefa</label>
-            <select
-              id="sym-task"
-              className="field-select"
-              value={task}
-              onChange={(e) => setTask(e.target.value as SymbolicTask)}
-            >
-              {(Object.keys(TASK_LABELS) as SymbolicTask[]).map((t) => (
-                <option key={t} value={t}>{TASK_LABELS[t]}</option>
-              ))}
-            </select>
+            <h1 className="font-display text-[32px] md:text-[40px] text-on-surface tracking-tight uppercase leading-none">
+              Cálculo Simbólico
+            </h1>
+            <p className="font-mono-data text-[12px] md:text-mono-data text-secondary mt-xs opacity-80">
+              ENV: BR_ENG_V2 | PRECISION: HIGH
+            </p>
+          </div>
+          <div className="flex items-center gap-sm self-end md:self-auto mb-xs md:mb-0">
+            <div className="w-3 h-3 rounded-full bg-secondary shadow-[0_0_6px_var(--tw-shadow-color)] shadow-secondary animate-pulse"></div>
+            <span className="font-label-caps text-[10px] md:text-label-caps text-on-surface-variant uppercase tracking-widest">
+              Engine Ready
+            </span>
+          </div>
+        </div>
+
+        {/* ERRO */}
+        {error && (
+          <div className="bg-error-container/20 border border-error text-error p-md rounded-lg font-mono-data text-sm">
+            ⚠ {error}
+          </div>
+        )}
+
+        {/* Input Area */}
+        <div className="calc-panel group relative flex flex-col bg-surface-container rounded-lg border-b border-surface-tint transition-all focus-within:border-secondary focus-within:border focus-within:shadow-[0_0_12px_rgba(var(--color-secondary),0.15)] overflow-hidden">
+          
+          {/* Input Header bar */}
+          <div className="bg-surface-container-high w-full flex items-center px-sm py-xs gap-md border-b border-outline-variant/30 overflow-x-auto custom-scrollbar">
+            <div className="flex gap-xs hidden sm:flex">
+              <div className="w-2 h-2 rounded-full bg-error"></div>
+              <div className="w-2 h-2 rounded-full bg-surface-tint"></div>
+              <div className="w-2 h-2 rounded-full bg-secondary"></div>
+            </div>
+            
+            <div className="flex items-center gap-sm">
+              <span className="font-mono-code text-[11px] text-on-surface-variant">TAREFA:</span>
+              <select
+                value={task}
+                onChange={(e) => setTask(e.target.value as SymbolicTask)}
+                className="bg-surface border border-outline-variant text-on-surface font-mono-code text-[11px] px-2 py-0.5 rounded outline-none focus:border-secondary"
+              >
+                {(Object.keys(TASK_LABELS) as SymbolicTask[]).map((t) => (
+                  <option key={t} value={t}>{TASK_LABELS[t]}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-sm">
+              <span className="font-mono-code text-[11px] text-on-surface-variant">VAR:</span>
+              <input
+                value={variable}
+                onChange={(e) => setVariable(e.target.value)}
+                className="bg-surface border border-outline-variant text-on-surface font-mono-code text-[11px] px-2 py-0.5 rounded outline-none focus:border-secondary w-12 text-center"
+                placeholder="x"
+              />
+            </div>
+            
+            <span className="font-mono-code text-[11px] text-on-surface-variant opacity-50 ml-auto hidden md:inline">
+              INPUT_BUFFER_01
+            </span>
           </div>
 
-          {/* EXPRESSÃO */}
-          <div>
-            <label className="field-label" htmlFor="sym-expr">Expressão</label>
-            <input
-              id="sym-expr"
-              className="field-input"
+          <div className="relative p-md pb-xl">
+            <textarea
+              className="text-glitch w-full bg-transparent resize-none outline-none font-mono-data text-[24px] md:text-[28px] text-primary placeholder-on-surface-variant/30 min-h-[120px]"
               value={expr}
               onChange={(e) => setExpr(e.target.value)}
-              placeholder="ex.: x^3 * sin(x)"
+              placeholder="f(x) = ..."
               spellCheck={false}
+              style={{ caretColor: "var(--color-secondary)" }}
             />
+            
+            {/* Decorative grid overlay inside input */}
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-5" 
+              style={{
+                backgroundSize: "20px 20px", 
+                backgroundImage: "linear-gradient(to right, var(--color-surface-tint) 1px, transparent 1px), linear-gradient(to bottom, var(--color-surface-tint) 1px, transparent 1px)"
+              }}
+            ></div>
           </div>
-
-          {/* VARIÁVEL */}
-          <div>
-            <label className="field-label" htmlFor="sym-var">Variável</label>
-            <input
-              id="sym-var"
-              className="field-input"
-              value={variable}
-              onChange={(e) => setVariable(e.target.value)}
-              placeholder="ex.: x"
-              style={{ maxWidth: "120px" }}
-            />
+          
+          {/* Floating actions */}
+          <div className="absolute bottom-md right-md flex gap-sm">
+            <button 
+              onClick={() => setExpr("")}
+              className="bg-transparent border border-outline-variant text-on-surface-variant font-label-caps text-[10px] md:text-label-caps px-sm md:px-md py-xs md:py-sm rounded hover:bg-surface-variant hover:text-on-surface transition-colors uppercase"
+            >
+              Limpar
+            </button>
+            <button 
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-secondary/10 border border-secondary text-secondary font-label-caps text-[10px] md:text-label-caps px-sm md:px-md py-xs md:py-sm rounded hover:bg-secondary hover:text-on-secondary transition-colors uppercase shadow-[0_0_10px_rgba(102,252,241,0.2)]"
+            >
+              {loading ? "Computando..." : "Computar"}
+            </button>
           </div>
+        </div>
 
-          {/* TECLADO */}
-          <SymbolicKeyboard onInsert={handleInsert} />
-
-          {/* BOTÃO CALCULAR */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-calcular"
-          >
-            {loading ? (
-              <>
-                <span style={{ display: "inline-block", animation: "spin 0.8s linear infinite" }}>⟳</span>
-                Calculando...
-              </>
-            ) : (
-              "Calcular"
-            )}
-          </button>
-        </form>
+        <SymbolicKeyboard onInsert={handleInsert} onBackspace={handleBackspace} />
       </div>
 
-      {/* ERRO */}
-      {error && (
-        <div className="alert-error" role="alert">
-          ⚠ {error}
-        </div>
-      )}
-
-      {/* RESULTADO */}
-      {response && (
-        <div className="calc-card result-appear">
-          <p className="field-label" style={{ marginBottom: "0.75rem" }}>
-            Resultado{task === "integrate" ? " (+ C — constante de integração)" : ""}
-          </p>
-          <div className="visor">
-            {formatResult(response.result)}
+      {/* Direita: Resolução */}
+      <div className="col-span-1 lg:col-span-5 h-[500px] lg:h-full flex flex-col mt-lg lg:mt-0 relative group">
+        
+        {/* Linha vertical conectora de decoração */}
+        <div className="hidden lg:block absolute -left-[10px] top-[10%] bottom-[10%] w-[1px] bg-gradient-to-b from-transparent via-outline-variant to-transparent"></div>
+        
+        {response ? (
+          <StepsAccordion steps={[formatResult(response.result), ...response.steps]} />
+        ) : (
+          <div className="calc-panel bg-surface-container h-full rounded-lg flex flex-col items-center justify-center border-t border-outline-variant/30 text-on-surface-variant opacity-50">
+            <span className="material-symbols-outlined text-[48px] mb-md">functions</span>
+            <p className="font-mono-data text-[14px]">Aguardando input...</p>
           </div>
-          <StepsAccordion steps={response.steps} />
-        </div>
-      )}
+        )}
 
-      {/* HISTÓRICO */}
-      {history.length > 0 && (
-        <div className="calc-card">
-          <p className="field-label" style={{ marginBottom: "0.6rem" }}>Histórico</p>
-          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "2px" }}>
-            {history.map((h, i) => (
-              <li
-                key={i}
-                className="history-item"
-                onClick={() => {
-                  const [t, ...rest] = h.split(": ");
-                  setTask(t as SymbolicTask);
-                  setExpr(rest.join(": "));
-                }}
-              >
-                {h}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        {/* Histórico simplificado em linha (ou escondido na interface nova, mas vamos manter como uma barra inferior) */}
+        {history.length > 0 && (
+          <div className="calc-panel mt-md bg-surface-container-low border border-outline-variant/30 rounded p-sm max-h-[100px] overflow-y-auto custom-scrollbar">
+            <p className="font-label-caps text-[10px] text-on-surface-variant mb-xs">HISTÓRICO</p>
+            <div className="flex flex-col gap-1">
+              {history.map((h, i) => (
+                <div
+                  key={i}
+                  className="font-mono-code text-[11px] text-on-surface hover:text-secondary cursor-pointer truncate"
+                  onClick={() => {
+                    // formato: "task: expr [var]"
+                    const match = h.match(/^([^:]+):\s+(.+?)\s+\[([^\]]+)\]$/);
+                    if (match) {
+                      setTask(match[1] as SymbolicTask);
+                      setExpr(match[2]);
+                      setVariable(match[3]);
+                    }
+                  }}
+                >
+                  › {h}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
