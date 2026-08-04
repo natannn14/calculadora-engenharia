@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/estatistica")
-@CrossOrigin(origins = "*") // Para permitir chamadas do frontend
 public class EstatisticaController {
 
     private final EstatisticaService service;

@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/symbolic")
-@CrossOrigin(origins = "*") // Vercel requires this
 public class SymbolicController {
 
     private final SymbolicService symbolicService;
