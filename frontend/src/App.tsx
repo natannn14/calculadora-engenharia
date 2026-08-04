@@ -1,245 +1,198 @@
-import { useState, useEffect } from "react";
-import { SymbolicForm } from "./components/SymbolicForm";
-import { BeamForm } from "./components/BeamForm";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Layout, MobileMenu } from "./components/layout";
+import { TraceAnimation } from "./components/TraceAnimation";
+import "./index.css";
 import "./App.css";
 
-type Tab = "symbolic" | "beam";
-type ThemeKey = 
-  | "theme-base" 
-  | "theme-omnitrix" 
-  | "theme-shinobi" 
-  | "theme-saiyan" 
-  | "theme-miles";
+// ─── Lazy load calculators (code-splitting per plugin) ───────────────────────
+const BasicoForm      = lazy(() => import("./components/BasicoForm").then(m => ({ default: m.BasicoForm })));
+const CientificoForm  = lazy(() => import("./components/CientificoForm").then(m => ({ default: m.CientificoForm })));
+const AlgebraForm     = lazy(() => import("./components/AlgebraForm").then(m => ({ default: m.AlgebraForm })));
+const SymbolicForm    = lazy(() => import("./components/SymbolicForm").then(m => ({ default: m.SymbolicForm })));
+const MatrizesForm    = lazy(() => import("./components/MatrizesForm").then(m => ({ default: m.MatrizesForm })));
+const ComplexosForm   = lazy(() => import("./components/ComplexosForm").then(m => ({ default: m.ComplexosForm })));
+const BeamForm        = lazy(() => import("./components/BeamForm").then(m => ({ default: m.BeamForm })));
+const EstatisticaForm = lazy(() => import("./components/EstatisticaForm").then(m => ({ default: m.EstatisticaForm })));
+const HomePage        = lazy(() => import("./features/home/HomePage").then(m => ({ default: m.HomePage })));
+const BibliotecaPage  = lazy(() => import("./features/biblioteca/BibliotecaPage").then(m => ({ default: m.BibliotecaPage })));
 
-interface ThemeOption {
-  key: ThemeKey;
-  label: string;
-  color: string;
-  bg: string;
-  shadow: string;
-  Logo: () => JSX.Element;
-}
-
-const THEMES: ThemeOption[] = [
-  { 
-    key: "theme-omnitrix",  
-    label: "Omnitrix", 
-    color: "#4ade80", 
-    bg: "#111811", 
-    shadow: "shadow-[0_0_15px_rgba(34,197,94,0.4)]",
-    Logo: () => (
-      <svg viewBox="0 0 100 100" fill="none" className="w-8 h-8">
-        <circle cx="50" cy="50" r="45" stroke="#16a34a" strokeWidth="6" fill="#051005" />
-        <polygon points="20,20 80,20 65,50 80,80 20,80 35,50" fill="#22c55e" />
-        <circle cx="50" cy="50" r="10" fill="#051005" />
-      </svg>
-    )
-  },
-  { 
-    key: "theme-shinobi",   
-    label: "Shinobi",  
-    color: "#f97316", 
-    bg: "#1f140d", 
-    shadow: "shadow-[0_0_15px_rgba(249,115,22,0.4)]",
-    Logo: () => (
-      <svg viewBox="0 0 100 100" fill="none" className="w-8 h-8">
-        <path d="M50 90C27.9 90 10 72.1 10 50C10 27.9 27.9 10 50 10C72.1 10 90 27.9 90 50" stroke="#f97316" strokeWidth="8" strokeLinecap="round" />
-        <path d="M50 10C65 25 65 75 50 90" stroke="#f97316" strokeWidth="8" strokeLinecap="round" />
-        <circle cx="50" cy="50" r="15" fill="#ea580c" />
-        <path d="M50 50L80 20" stroke="#f97316" strokeWidth="8" strokeLinecap="round" />
-      </svg>
-    )
-  },
-  { 
-    key: "theme-saiyan",    
-    label: "Saiyan",   
-    color: "#60a5fa", 
-    bg: "#0f172a", 
-    shadow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
-    Logo: () => (
-      <svg viewBox="0 0 100 100" fill="none" className="w-8 h-8">
-        <circle cx="50" cy="50" r="45" fill="#f59e0b" stroke="#d97706" strokeWidth="4" />
-        <polygon points="50,20 58,40 80,40 62,55 70,75 50,62 30,75 38,55 20,40 42,40" fill="#dc2626" />
-      </svg>
-    )
-  },
-  { 
-    key: "theme-miles",     
-    label: "Miles",    
-    color: "#f43f5e", 
-    bg: "#18181b", 
-    shadow: "shadow-[0_0_15px_rgba(225,29,72,0.4)]",
-    Logo: () => (
-      <svg viewBox="0 0 100 100" fill="none" className="w-8 h-8">
-        <circle cx="50" cy="50" r="45" fill="#09090b" stroke="#e11d48" strokeWidth="4" />
-        <path d="M50 20 L50 80 M20 50 L80 50 M28 28 L72 72 M28 72 L72 28" stroke="#e11d48" strokeWidth="2" opacity="0.5" />
-        <circle cx="50" cy="50" r="15" fill="#e11d48" />
-        <path d="M50 35 Q65 20 80 40 Q60 60 50 80 Q40 60 20 40 Q35 20 50 35 Z" fill="#e11d48" />
-      </svg>
-    )
-  },
-  { 
-    key: "theme-base",      
-    label: "Swing",    
-    color: "#62f9ee", 
-    bg: "#1f1f24", 
-    shadow: "shadow-[0_0_15px_rgba(98,249,238,0.4)]",
-    Logo: () => (
-      <svg viewBox="0 0 100 100" fill="none" className="w-8 h-8">
-        <rect x="20" y="20" width="60" height="60" rx="10" stroke="#7bd6d1" strokeWidth="6" fill="#121317" />
-        <line x1="35" y1="40" x2="65" y2="40" stroke="#62f9ee" strokeWidth="6" strokeLinecap="round" />
-        <line x1="35" y1="55" x2="45" y2="55" stroke="#62f9ee" strokeWidth="6" strokeLinecap="round" />
-        <line x1="55" y1="55" x2="65" y2="55" stroke="#62f9ee" strokeWidth="6" strokeLinecap="round" />
-        <line x1="35" y1="70" x2="45" y2="70" stroke="#62f9ee" strokeWidth="6" strokeLinecap="round" />
-        <line x1="55" y1="70" x2="65" y2="70" stroke="#62f9ee" strokeWidth="6" strokeLinecap="round" />
-      </svg>
-    )
-  },
+// ─── Themes ──────────────────────────────────────────────────────────────────
+type ThemeKey = "theme-omnitrix" | "theme-shinobi" | "theme-saiyan" | "theme-miles";
+const THEMES = [
+  { key: "theme-omnitrix", label: "Omnitrix",  color: "#4ade80", bg: "#111811" },
+  { key: "theme-shinobi",  label: "Shinobi",   color: "#f97316", bg: "#1f140d" },
+  { key: "theme-saiyan",   label: "Saiyan",    color: "#60a5fa", bg: "#0f172a" },
+  { key: "theme-miles",    label: "Miles",     color: "#f43f5e", bg: "#18181b" },
 ];
 
+// ─── Route → title map ───────────────────────────────────────────────────────
+const ROUTE_TITLES: Record<string, string> = {
+  "/":                       "Início",
+  "/matematica/basico":      "Calculadora Básica",
+  "/matematica/cientifico":  "Calculadora Científica",
+  "/matematica/algebra":     "Álgebra e Equações",
+  "/matematica/calculo":     "Cálculo Diferencial e Integral",
+  "/matematica/matrizes":    "Matrizes e Vetores",
+  "/matematica/complexos":   "Números Complexos",
+  "/matematica/estatistica": "Estatística e Probabilidade",
+  "/engenharia/vigas":       "Engenharia Estrutural — Vigas",
+  "/fisica":                 "Física",
+  "/engenharia":             "Engenharia",
+  "/ferramentas":            "Ferramentas",
+  "/biblioteca":             "Biblioteca de Conhecimento",
+  "/configuracoes":          "Configurações",
+  "/menu":                   "Todos os Módulos",
+};
+
+// ─── Loading spinner ─────────────────────────────────────────────────────────
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center h-full min-h-[300px]">
+      <div className="flex flex-col items-center gap-3 text-[var(--color-text-muted)]">
+        <span className="material-symbols-outlined text-[40px] text-[var(--color-primary)] animate-spin" style={{ animationDuration: '1.2s' }}>
+          autorenew
+        </span>
+        <span className="font-mono-code text-[var(--font-size-small)] uppercase tracking-widest">
+          Carregando módulo...
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Module placeholders (Física, Ferramentas, Config) ───────────────────────
+function ModulePlaceholder({ title, icon, items = [] }: { title: string; icon: string; items?: string[] }) {
+  return (
+    <div className="flex flex-col gap-6 items-start py-4 w-full max-w-4xl mx-auto">
+      <div className="flex items-center gap-4">
+        <span className="material-symbols-outlined text-[48px] text-[var(--color-primary)]">{icon}</span>
+        <div>
+          <h1 className="font-display text-[var(--font-size-h1)] text-[var(--color-text-primary)] leading-none">{title}</h1>
+          <span className="font-mono-code text-[var(--font-size-small)] text-[var(--color-primary)] uppercase tracking-widest opacity-70">
+            Em desenvolvimento
+          </span>
+        </div>
+      </div>
+      {items.length > 0 && (
+        <div className="w-full bg-[var(--color-surface-elevated)] border border-[var(--color-border)] rounded-xl p-6">
+          <p className="font-label-caps text-[var(--font-size-caption)] text-[var(--color-text-muted)] uppercase tracking-widest mb-4">
+            Previsto para este módulo:
+          </p>
+          <ul className="flex flex-col gap-2">
+            {items.map((item, i) => (
+              <li key={i} className="flex items-center gap-3 font-body-md text-[var(--color-text-secondary)]">
+                <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">schedule</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
 function App() {
-  const [tab, setTab] = useState<Tab>("symbolic");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+  const pageTitle = ROUTE_TITLES[location.pathname] ?? "CalculaEng";
+
+  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ThemeKey>(() => {
-    return (localStorage.getItem("calc_theme") as ThemeKey) || "theme-base";
+    const saved = localStorage.getItem("calc_theme");
+    return (saved as ThemeKey) || "theme-omnitrix";
   });
 
   useEffect(() => {
-    document.documentElement.className = currentTheme;
-    document.body.className = `${currentTheme} transition-colors duration-500`;
+    document.documentElement.className = currentTheme === "theme-omnitrix" ? "" : currentTheme;
     localStorage.setItem("calc_theme", currentTheme);
   }, [currentTheme]);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-
-  return (
-    <div className="bg-background font-body-md text-on-background min-h-screen pb-32 transition-colors duration-500">
-      
-      {/* Mobile Sidebar Overlay */}
-      <div 
-        className={`fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden transition-opacity ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        onClick={toggleSidebar}
-      />
-
-      {/* Sidebar */}
-      <aside 
-        className={`fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col border-r border-outline-variant transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+  const HeaderRight = (
+    <div className="relative">
+      <button
+        onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+        className="w-[48px] h-[48px] flex items-center justify-center rounded-full hover:bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-all border border-transparent hover:border-[var(--color-border)]"
+        title="Configurações de Aura"
       >
-        <div className="p-lg mb-xl flex items-center justify-between gap-sm">
-          <div className="flex items-center gap-sm">
-            <div className="w-8 h-8 bg-secondary rounded flex items-center justify-center text-on-secondary font-display font-bold">
-              ∫
-            </div>
-            <span className="font-headline-md text-headline-md tracking-tight text-on-surface">CalculaEng</span>
-          </div>
-          <button className="lg:hidden text-on-surface-variant p-xs" onClick={toggleSidebar}>
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
+        <span className="material-symbols-outlined text-[24px]">palette</span>
+      </button>
 
-        <nav className="flex-1 px-md space-y-unit">
-          <button
-            onClick={() => { setTab("symbolic"); setIsSidebarOpen(false); }}
-            className={`w-full flex items-center gap-md px-md py-sm rounded text-left transition-all font-label-caps text-label-caps uppercase ${
-              tab === "symbolic" 
-                ? "bg-secondary-container text-on-secondary-container" 
-                : "text-on-surface-variant hover:bg-surface-variant hover:text-on-surface"
-            }`}
-          >
-            <span className="material-symbols-outlined">functions</span>
-            Cálculo Simbólico
-          </button>
-          
-          <button
-            onClick={() => { setTab("beam"); setIsSidebarOpen(false); }}
-            className={`w-full flex items-center gap-md px-md py-sm rounded text-left transition-all font-label-caps text-label-caps uppercase ${
-              tab === "beam" 
-                ? "bg-secondary-container text-on-secondary-container" 
-                : "text-on-surface-variant hover:bg-surface-variant hover:text-on-surface"
-            }`}
-          >
-            <span className="material-symbols-outlined">schema</span>
-            Modelos de Engenharia
-          </button>
-        </nav>
-
-        <footer className="p-lg mt-auto border-t border-outline-variant space-y-md">
-          <button className="w-full flex items-center justify-center gap-sm py-sm border border-secondary text-secondary font-label-caps text-label-caps uppercase hover:bg-secondary hover:text-on-secondary transition-all rounded">
-            <span className="material-symbols-outlined text-[18px]">download</span>
-            Exportar Relatório
-          </button>
-        </footer>
-      </aside>
-
-      {/* Main Container */}
-      <div className="pl-0 lg:pl-72 flex flex-col min-h-screen transition-all duration-300 relative z-10">
-        
-        {/* Header */}
-        <header className="fixed top-0 left-0 lg:left-72 right-0 h-16 bg-surface-container/80 backdrop-blur-xl z-30 px-sm md:px-lg flex items-center justify-between border-b border-outline-variant">
-          <div className="flex items-center gap-xs md:gap-md">
-            <button className="lg:hidden text-on-surface p-sm hover:text-secondary flex items-center" onClick={toggleSidebar}>
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-            <span className="font-mono-code text-mono-code text-secondary hidden sm:block">
-              CALC_CORE_v2.5
+      {isThemeMenuOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsThemeMenuOpen(false)} />
+          <div className="absolute right-0 top-full mt-2 z-50 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-[var(--shadow-lg)] p-3 flex flex-col gap-2 min-w-[180px]">
+            <span className="font-label-caps text-[var(--font-size-caption)] text-[var(--color-text-muted)] uppercase tracking-widest px-2 pb-1 border-b border-[var(--color-border)]">
+              Aura do Sistema
             </span>
-          </div>
-
-          <div className="flex items-center gap-sm md:gap-lg">
-            <button className="hidden sm:flex items-center gap-sm px-md py-xs border border-secondary text-secondary font-label-caps text-label-caps uppercase hover:bg-secondary hover:text-on-secondary transition-all rounded">
-              <span className="material-symbols-outlined text-[18px]">install_desktop</span>
-              PWA Install
-            </button>
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary-container/20">
-              <span className="material-symbols-outlined text-on-primary text-[18px]">person</span>
-            </div>
-          </div>
-        </header>
-
-        {/* Content Area */}
-        <main className="relative pt-16 flex-1 flex flex-col">
-          <div className="flex flex-col w-full flex-1 relative">
-            <div className="max-w-[1280px] w-full mx-auto relative z-10 flex-1 px-4 lg:px-8 py-6">
-              {tab === "symbolic" && <SymbolicForm />}
-              {tab === "beam"     && <BeamForm />}
-            </div>
-          </div>
-        </main>
-      </div>
-
-      {/* Bottom Theme Selector */}
-      <div className="fixed bottom-0 left-0 lg:left-72 right-0 bg-surface-container/95 backdrop-blur-xl border-t border-outline-variant p-md pb-lg shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-40 transition-colors duration-500">
-        <div className="font-label-caps text-label-caps text-on-surface-variant mb-sm px-sm">
-          Selecione a Aura
-        </div>
-        <div className="flex gap-md overflow-x-auto custom-scrollbar px-sm pb-sm">
-          {THEMES.map((t) => {
-            const isActive = currentTheme === t.key;
-            return (
+            {THEMES.map((t) => (
               <button
                 key={t.key}
-                onClick={() => {
-                  setCurrentTheme(t.key);
-                  if (navigator.vibrate) navigator.vibrate(10);
-                }}
-                className={`theme-btn flex flex-col items-center gap-xs flex-shrink-0 transition-opacity ${isActive ? "opacity-100" : "opacity-60 hover:opacity-100"}`}
+                onClick={() => { setCurrentTheme(t.key as ThemeKey); setIsThemeMenuOpen(false); }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[var(--font-size-small)] font-label-caps transition-all ${currentTheme === t.key ? "bg-[var(--color-surface-elevated)] text-[var(--color-primary)]" : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]"}`}
               >
-                <div 
-                  className={`w-14 h-14 rounded-full flex items-center justify-center border-2 transition-all ${isActive ? t.shadow : ""}`}
-                  style={{ backgroundColor: t.bg, borderColor: t.color }}
-                >
-                  <t.Logo />
-                </div>
-                <span className={`font-label-caps text-[10px] ${isActive ? "text-on-surface" : "text-on-surface-variant"}`}>
-                  {t.label}
-                </span>
+                <span className="w-3 h-3 rounded-full border-2 border-white/20 flex-shrink-0" style={{ backgroundColor: t.color }} />
+                {t.label}
+                {currentTheme === t.key && <span className="material-symbols-outlined text-[14px] ml-auto">check</span>}
               </button>
-            );
-          })}
-        </div>
-      </div>
-
+            ))}
+          </div>
+        </>
+      )}
     </div>
+  );
+
+  return (
+    <Layout headerRight={HeaderRight} pageTitle={pageTitle}>
+      <TraceAnimation theme={currentTheme} triggerKey={location.pathname} />
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          {/* ── Home ─────────────────────────────────────────── */}
+          <Route path="/" element={<HomePage />} />
+
+          {/* ── Matemática ───────────────────────────────────── */}
+          <Route path="/matematica/basico"      element={<BasicoForm />} />
+          <Route path="/matematica/cientifico"  element={<CientificoForm />} />
+          <Route path="/matematica/algebra"     element={<AlgebraForm />} />
+          <Route path="/matematica/calculo"     element={<SymbolicForm />} />
+          <Route path="/matematica/matrizes"    element={<MatrizesForm />} />
+          <Route path="/matematica/complexos"   element={<ComplexosForm />} />
+          <Route path="/matematica/estatistica" element={<EstatisticaForm />} />
+          <Route path="/matematica" element={<Navigate to="/" replace />} />
+
+          {/* ── Física ───────────────────────────────────────── */}
+          <Route path="/fisica" element={
+            <ModulePlaceholder title="Física" icon="bolt" items={["Cinemática e Dinâmica", "Termodinâmica", "Eletromagnetismo", "Óptica e Ondas"]} />
+          } />
+
+          {/* ── Engenharia ───────────────────────────────────── */}
+          <Route path="/engenharia/vigas" element={<BeamForm />} />
+          <Route path="/engenharia" element={
+            <ModulePlaceholder title="Engenharia" icon="engineering" items={["Resistência dos Materiais", "Hidráulica e Hidrologia", "Circuitos Elétricos", "Geotecnia"]} />
+          } />
+
+          {/* ── Ferramentas ──────────────────────────────────── */}
+          <Route path="/ferramentas" element={
+            <ModulePlaceholder title="Ferramentas" icon="build" items={["Conversor de Unidades", "Memorial Descritivo (PDF)", "Calculadora de Constantes"]} />
+          } />
+
+          {/* ── Biblioteca ───────────────────────────────────── */}
+          <Route path="/biblioteca" element={<BibliotecaPage />} />
+
+          {/* ── Configurações ────────────────────────────────── */}
+          <Route path="/configuracoes" element={
+            <ModulePlaceholder title="Configurações" icon="settings" items={["Modo Estudante / Profissional", "Seleção de PPC do Curso", "Idioma (i18n)", "PWA e Offline"]} />
+          } />
+
+          {/* ── Mobile Menu ──────────────────────────────────── */}
+          <Route path="/menu" element={<MobileMenu />} />
+
+          {/* ── Fallback ─────────────────────────────────────── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </Layout>
   );
 }
 

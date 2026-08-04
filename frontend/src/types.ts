@@ -6,13 +6,19 @@ export type SymbolicTask =
   | "expand"
   | "factor"
   | "limit"
-  | "taylor";
+  | "taylor"
+  | "partial_derivative"
+  | "integral_trapezio"
+  | "integral_simpson";
 
 export interface SymbolicRequest {
-  task: SymbolicTask;
+  task: string;
   expr: string;
   variable: string;
   lang?: string;
+  lowerLimit?: number;
+  upperLimit?: number;
+  subintervals?: number;
 }
 
 export interface SymbolicResponse {
