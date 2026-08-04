@@ -1,0 +1,66 @@
+[
+  {
+    "id": "aco-ca50",
+    "name": "Aço CA-50",
+    "category": "Metálico",
+    "properties": {
+      "modulo_elasticidade": {
+        "value": 200000,
+        "unit": "MPa"
+      },
+      "tensao_escoamento": {
+        "value": 500,
+        "unit": "MPa"
+      },
+      "tensao_ruptura": {
+        "value": 550,
+        "unit": "MPa"
+      },
+      "densidade": {
+        "value": 7850,
+        "unit": "kg/m³"
+      }
+    },
+    "normativeRef": {
+      "standard": "ABNT NBR 7480",
+      "version": "2007",
+      "validFrom": "2007-01-01"
+    },
+    "references": [
+      {
+        "title": "ABNT NBR 7480:2007 - Aço para Armaduras",
+        "standard": "NBR 7480"
+      }
+    ]
+  },
+  {
+    "id": "concreto-c25",
+    "name": "Concreto C25",
+    "category": "Cimentício",
+    "properties": {
+      "resistencia_compressao": {
+        "value": 25,
+        "unit": "MPa"
+      },
+      "modulo_elasticidade": {
+        "value": 28674,
+        "unit": "MPa"
+      },
+      "densidade": {
+        "value": 2400,
+        "unit": "kg/m³"
+      }
+    },
+    "normativeRef": {
+      "standard": "ABNT NBR 6118",
+      "version": "2014",
+      "validFrom": "2014-01-01"
+    },
+    "references": [
+      {
+        "title": "ABNT NBR 6118:2014 - Projeto de Estruturas de Concreto",
+        "standard": "NBR 6118"
+      }
+    ]
+  }
+]

@@ -1,0 +1,64 @@
+@layer base {
+  :root {
+    --color-bg: #050a05;
+    --color-surface: #0a140a;
+    --color-surface-elevated: #112411;
+    
+    --color-primary: #4ade80;
+    --color-primary-dark: #16a34a;
+    --color-secondary: #0ea5e9;
+    --color-accent: #facc15;
+    
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
+
+    --color-border: rgba(74, 222, 128, 0.15);
+    --color-border-strong: rgba(74, 222, 128, 0.4);
+
+    --color-text-primary: #f0fdf4;
+    --color-text-secondary: #86efac;
+    --color-text-muted: rgba(240, 253, 244, 0.5);
+  }
+
+  /* Theme Overrides */
+  .theme-shinobi {
+    --color-bg: #0f0805;
+    --color-surface: #1a0f0a;
+    --color-surface-elevated: #2d1a11;
+    --color-primary: #fb923c;
+    --color-primary-dark: #ea580c;
+    --color-border: rgba(251, 146, 60, 0.15);
+    --color-border-strong: rgba(251, 146, 60, 0.4);
+    --color-text-primary: #fff7ed;
+    --color-text-secondary: #fdba74;
+    --color-text-muted: rgba(255, 247, 237, 0.5);
+  }
+  
+  .theme-saiyan {
+    --color-bg: #050a14;
+    --color-surface: #0a1122;
+    --color-surface-elevated: #111d38;
+    --color-primary: #60a5fa;
+    --color-primary-dark: #2563eb;
+    --color-border: rgba(96, 165, 250, 0.15);
+    --color-border-strong: rgba(96, 165, 250, 0.4);
+    --color-text-primary: #eff6ff;
+    --color-text-secondary: #93c5fd;
+    --color-text-muted: rgba(239, 246, 255, 0.5);
+  }
+  
+  .theme-miles {
+    --color-bg: #0c0508;
+    --color-surface: #17080f;
+    --color-surface-elevated: #2b0e1b;
+    --color-primary: #f43f5e;
+    --color-primary-dark: #e11d48;
+    --color-border: rgba(244, 63, 94, 0.15);
+    --color-border-strong: rgba(244, 63, 94, 0.4);
+    --color-text-primary: #fff1f2;
+    --color-text-secondary: #fda4af;
+    --color-text-muted: rgba(255, 241, 242, 0.5);
+  }
+}\n

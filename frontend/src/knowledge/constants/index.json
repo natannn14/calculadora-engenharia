@@ -1,0 +1,67 @@
+[
+  {
+    "id": "g-padrao",
+    "name": "Aceleração da Gravidade",
+    "symbol": "g",
+    "value": 9.80665,
+    "unit": "m/s²",
+    "description": "Aceleração gravitacional padrão ao nível do mar",
+    "category": "FISICA",
+    "relatedArea": [
+      "Mecânica",
+      "Resistência dos Materiais"
+    ]
+  },
+  {
+    "id": "pi",
+    "name": "Pi",
+    "symbol": "π",
+    "value": 3.14159265358979,
+    "unit": "adimensional",
+    "description": "Razão entre circunferência e diâmetro de um círculo",
+    "category": "MATEMATICA",
+    "relatedArea": [
+      "Geometria",
+      "Trigonometria"
+    ]
+  },
+  {
+    "id": "e-euler",
+    "name": "Número de Euler",
+    "symbol": "e",
+    "value": 2.71828182845905,
+    "unit": "adimensional",
+    "description": "Base do logaritmo natural",
+    "category": "MATEMATICA",
+    "relatedArea": [
+      "Cálculo",
+      "Estatística"
+    ]
+  },
+  {
+    "id": "R-gas",
+    "name": "Constante Universal dos Gases",
+    "symbol": "R",
+    "value": 8.314,
+    "unit": "J/(mol·K)",
+    "description": "Constante dos gases ideais",
+    "category": "FISICA",
+    "relatedArea": [
+      "Termodinâmica",
+      "Química"
+    ]
+  },
+  {
+    "id": "E-aco",
+    "name": "Módulo de Elasticidade do Aço",
+    "symbol": "E",
+    "value": 200000000000,
+    "unit": "Pa",
+    "description": "Módulo de Young para o aço estrutural conforme ABNT NBR 6118",
+    "category": "ENGENHARIA",
+    "relatedArea": [
+      "Resistência dos Materiais",
+      "Estruturas"
+    ]
+  }
+]

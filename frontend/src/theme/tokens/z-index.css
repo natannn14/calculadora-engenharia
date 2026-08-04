@@ -1,0 +1,11 @@
+@layer base {
+  :root {
+    --z-below: -1;
+    --z-normal: 1;
+    --z-above: 10;
+    --z-header: 40;
+    --z-sidebar: 50;
+    --z-modal: 100;
+    --z-toast: 200;
+  }
+}\n

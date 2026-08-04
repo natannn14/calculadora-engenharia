@@ -1,0 +1,15 @@
+@layer base {
+  :root {
+    /* Depth by shadows instead of glow */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
+    
+    /* Glow only for active/results */
+    --glow-primary: 0 0 15px rgba(74, 222, 128, 0.3);
+  }
+  
+  .theme-shinobi { --glow-primary: 0 0 15px rgba(251, 146, 60, 0.3); }
+  .theme-saiyan { --glow-primary: 0 0 15px rgba(96, 165, 250, 0.3); }
+  .theme-miles { --glow-primary: 0 0 15px rgba(244, 63, 94, 0.3); }
+}\n

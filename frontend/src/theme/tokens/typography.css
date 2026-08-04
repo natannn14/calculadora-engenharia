@@ -1,0 +1,18 @@
+@layer base {
+  :root {
+    --font-family-base: 'IBM Plex Sans', sans-serif;
+    --font-family-mono: 'IBM Plex Mono', monospace;
+
+    --font-size-display: 48px;
+    --font-size-h1: 32px;
+    --font-size-h2: 24px;
+    --font-size-h3: 20px;
+    --font-size-body: 16px;
+    --font-size-small: 14px;
+    --font-size-caption: 12px;
+    
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+  }
+}\n
